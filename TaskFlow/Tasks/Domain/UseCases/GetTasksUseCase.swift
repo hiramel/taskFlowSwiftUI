@@ -10,7 +10,6 @@ import Foundation
 struct GetTasksUseCase: GetTasksUseCaseProtocol {
     
     private let taskRepository: TasksRepositoryProtocol
-    
     init(taskRepository: TasksRepositoryProtocol) {
         self.taskRepository = taskRepository
     }

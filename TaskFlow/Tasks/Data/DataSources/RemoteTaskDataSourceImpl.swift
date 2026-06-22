@@ -11,15 +11,11 @@ final class RemoteTaskDataSourceImpl: RemoteTaskDataSourceProtocol {
     
     private let baseUrl = "https://6a3436058248ee962fa53dda.mockapi.io/api/hej/Tasks"
     
-    
     func fetchUsers() async throws -> [TaskDTO] {
-        
         guard let url = URL(string: baseUrl) else {
             throw URLError(.badURL)
         }
-        
         let (data, _) = try await URLSession.shared.data(from: url)
-        
         return try JSONDecoder().decode([TaskDTO].self, from: data)
         
 //        let tasks = [
