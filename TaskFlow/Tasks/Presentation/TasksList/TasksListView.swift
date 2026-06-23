@@ -7,10 +7,11 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct TasksListView: View {
-    
     let viewModel: TasksListViewModel
-    
+
     var body: some View {
         content
             .navigationTitle("Tasks")
@@ -18,12 +19,26 @@ struct TasksListView: View {
                 await viewModel.loadTasks()
             }
     }
-    
+
+    @ViewBuilder
     private var content: some View {
-        List {
-            ForEach(viewModel.tasks) { task in
-                Text(task.title)
+        switch viewModel.state {
+        case .idle, .loading:
+            ProgressView("Loading Tasks")
+
+        case .loaded(let tasks):
+            List {
+                ForEach(tasks) { task in
+                    Text(task.title)
+                }
             }
+
+        case .failed(let message):
+            ContentUnavailableView(
+                "No se pudieron cargar las tasks",
+                systemImage: "exclamationmark.triangle",
+                description: Text(message)
+            )
         }
     }
 }

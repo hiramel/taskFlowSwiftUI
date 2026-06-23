@@ -9,13 +9,30 @@ import Foundation
 
 final class RemoteTaskDataSourceImpl: RemoteTaskDataSourceProtocol {
     
+    
+    private let baseURL: URL
+    private let session: URLSession
+    
+    init(baseURL: URL, session: URLSession = .shared) {
+        self.baseURL = baseURL
+        self.session = session
+    }
+    
     private let baseUrl = "https://6a3436058248ee962fa53dda.mockapi.io/api/hej/Tasks"
     
-    func fetchUsers() async throws -> [TaskDTO] {
-        guard let url = URL(string: baseUrl) else {
-            throw URLError(.badURL)
+    func fetchTasks() async throws -> [TaskDTO] {
+        
+        let (data, response) = try await session.data(from: baseURL)
+
+//        guard let url = URL(string: baseUrl) else {
+//            throw URLError(.badURL)
+//        }
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
         }
-        let (data, _) = try await URLSession.shared.data(from: url)
+        
         return try JSONDecoder().decode([TaskDTO].self, from: data)
         
 //        let tasks = [

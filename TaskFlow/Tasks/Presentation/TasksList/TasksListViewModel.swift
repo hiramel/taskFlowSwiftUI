@@ -10,9 +10,13 @@ import Observation
 
 @Observable
 @MainActor
-class TasksListViewModel {
+final class TasksListViewModel {
     
-    var tasks:[Task] = []    
+//    var tasks:[Task] = []
+//    var isLoading = false
+    
+    var state: TasksListState = .idle
+    
     private let getTasksUseCase: GetTasksUseCaseProtocol
     
     init(getTasksUseCase: GetTasksUseCaseProtocol) {
@@ -20,10 +24,20 @@ class TasksListViewModel {
     }
     
     func loadTasks() async {
+        state = .loading
+
         do {
-            tasks = try await getTasksUseCase.execute()
+            let tasks = try await getTasksUseCase.execute()
+            state = .loaded(tasks)
         } catch {
-            print(error)
+            state = .failed(error.localizedDescription)
         }
     }
+}
+
+enum TasksListState {
+    case idle
+    case loading
+    case loaded([Task])
+    case failed(String)
 }

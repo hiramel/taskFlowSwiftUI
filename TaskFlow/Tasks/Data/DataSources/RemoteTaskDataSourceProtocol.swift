@@ -7,5 +7,5 @@
 
 import Foundation
 protocol RemoteTaskDataSourceProtocol {
-    func fetchUsers() async throws -> [TaskDTO]
+    func fetchTasks() async throws -> [TaskDTO]
 }
