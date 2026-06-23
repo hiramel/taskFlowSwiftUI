@@ -15,7 +15,7 @@ final class TasksRepositoryImpl: TasksRepositoryProtocol {
     }
     
     func getTasks() async throws -> [Task] {
-        let dtos = try await dataSource.fetchUsers()
+        let dtos = try await dataSource.fetchTasks()
         return dtos.map { $0.toDomain() }
     }
 }
