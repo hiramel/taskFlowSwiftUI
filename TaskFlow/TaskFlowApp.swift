@@ -24,10 +24,6 @@ struct TaskFlowApp: App {
 }
 
 final class AppContainer {
-    
-    private let baseURL = URL(string: "https://6a3436058248ee962fa53dda.mockapi.io/api/hej/Tasks")!
-
-    
     lazy var remoteTaskDataSource = RemoteTaskDataSourceImpl(baseURL: AppEnvironment.tasksBaseURL)
     lazy var taskRepository = TasksRepositoryImpl(dataSource: remoteTaskDataSource)
     lazy var getTasksUseCase = GetTasksUseCase(taskRepository: taskRepository)
