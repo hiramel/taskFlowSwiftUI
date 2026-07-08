@@ -7,9 +7,7 @@
 
 import Foundation
 
-final class RemoteTaskDataSourceImpl: RemoteTaskDataSourceProtocol {
-    
-    
+final class RemoteTaskDataSourceImpl: TaskDataSourceProtocol {
     private let baseURL: URL
     private let session: URLSession
     
@@ -30,4 +28,20 @@ final class RemoteTaskDataSourceImpl: RemoteTaskDataSourceProtocol {
         return try JSONDecoder().decode([TaskDTO].self, from: data)
         
     }
+    
+    func createTask(_ task: TaskDTO) async throws {
+        throw URLError(.unsupportedURL)
+    }
+    
+    func updateTask(_ task: TaskDTO) async throws {
+        throw URLError(.unsupportedURL)
+    }
+    
+    func deleteTask(id: String) async throws {
+        throw URLError(.unsupportedURL)
+    }
+    
+    
+    
+
 }

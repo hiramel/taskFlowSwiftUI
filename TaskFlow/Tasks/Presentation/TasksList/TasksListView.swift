@@ -280,7 +280,8 @@ private struct TaskListRowView: View {
     }
 }
 
-private struct PreviewTaskDataSource: RemoteTaskDataSourceProtocol {
+private struct PreviewTaskDataSource: TaskDataSourceProtocol {
+    
     func fetchTasks() async throws -> [TaskDTO] {
         [
             TaskDTO(id: "1", title: "UI/UX Project", description: "Design the new mobile app screens and interaction flow for TaskFlow.", dueDate: "Today, 10:00 AM", category: "Work", priority: "High Priority", status: 0),
@@ -290,4 +291,10 @@ private struct PreviewTaskDataSource: RemoteTaskDataSourceProtocol {
             TaskDTO(id: "5", title: "Read Book", description: "Finish the current chapter.", dueDate: "May 23, 2024", category: "Personal", priority: "Medium Priority", status: 0)
         ]
     }
+    
+    func createTask(_ task: TaskDTO) async throws { }
+
+    func updateTask(_ task: TaskDTO) async throws { }
+
+    func deleteTask(id: String) async throws { }
 }

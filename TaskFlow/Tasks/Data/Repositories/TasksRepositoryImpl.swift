@@ -9,8 +9,8 @@ import Foundation
 
 final class TasksRepositoryImpl: TasksRepositoryProtocol {
     
-    private let dataSource: RemoteTaskDataSourceProtocol
-    init(dataSource: RemoteTaskDataSourceProtocol) {
+    private let dataSource: TaskDataSourceProtocol
+    init(dataSource: TaskDataSourceProtocol) {
         self.dataSource = dataSource
     }
     
