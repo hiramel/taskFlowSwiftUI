@@ -10,6 +10,7 @@ import Foundation
 final class TasksRepositoryImpl: TasksRepositoryProtocol {
     
     private let dataSource: TaskDataSourceProtocol
+    
     init(dataSource: TaskDataSourceProtocol) {
         self.dataSource = dataSource
     }
@@ -17,5 +18,10 @@ final class TasksRepositoryImpl: TasksRepositoryProtocol {
     func getTasks() async throws -> [Task] {
         let dtos = try await dataSource.fetchTasks()
         return dtos.map { $0.toDomain() }
+    }
+    
+    func createTask(_ task: Task) async throws {
+        let dto = task.toDTO()
+        try await dataSource.createTask(dto)
     }
 }

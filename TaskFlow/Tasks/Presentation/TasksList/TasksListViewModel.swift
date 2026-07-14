@@ -28,7 +28,7 @@ final class TasksListViewModel {
 
         do {
             let tasks = try await getTasksUseCase.execute()
-            state = .loaded(tasks)
+            state = .loaded(tasks)//TODO aqui es donde pasa el task a la vista, investigar esto despues.
         } catch {
             state = .failed(error.localizedDescription)
         }

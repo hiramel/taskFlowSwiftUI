@@ -36,12 +36,33 @@ struct TaskFlowApp: App {
 }
 
 final class AppContainer {
-    lazy var remoteTaskDataSource = RemoteTaskDataSourceImpl(baseURL: AppEnvironment.tasksBaseURL)
-    lazy var taskRepository = TasksRepositoryImpl(dataSource: remoteTaskDataSource)
+    
+    private lazy var restTaskDataSource = RemoteTaskDataSourceImpl(
+        baseURL: AppEnvironment.tasksBaseURL
+    )
+
+    private lazy var firestoreTaskDataSource = FirestoreTaskDataSourceImpl()
+    
+    private lazy var taskDataSource: TaskDataSourceProtocol = {
+        switch AppEnvironment.taskDataSourceKind {
+        case .rest:
+            return self.restTaskDataSource
+
+        case .firestore:
+            return self.firestoreTaskDataSource
+        }
+    }()
+    
+    
+    lazy var taskRepository = TasksRepositoryImpl(dataSource: taskDataSource)
     lazy var getTasksUseCase = GetTasksUseCase(taskRepository: taskRepository)
     lazy var tasksListViewModel = TasksListViewModel(getTasksUseCase: getTasksUseCase)
+    
+    lazy var createTaskUseCase = CreateTaskUseCase(taskRepository: taskRepository)
+
 }
 
 enum AppEnvironment {
+    static let taskDataSourceKind: TaskDataSourceKind = .firestore
     static let tasksBaseURL = URL(string: "https://6a3436058248ee962fa53dda.mockapi.io/api/hej/Tasks")!
 }
