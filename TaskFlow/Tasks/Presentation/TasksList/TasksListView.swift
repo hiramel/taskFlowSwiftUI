@@ -9,8 +9,10 @@ import SwiftUI
 
 struct TasksListView: View {
     let viewModel: TasksListViewModel
+    let createTaskViewModel: CreateTaskViewModel
 
     @State private var selectedFilter: TaskListFilter = .all
+    @State private var isShowingCreateTask = false
 
     var body: some View {
         ZStack {
@@ -45,6 +47,12 @@ struct TasksListView: View {
         }
         .task {
             await viewModel.loadTasks()
+        }
+        
+        .sheet(isPresented: $isShowingCreateTask) {
+            CreateTaskView(viewModel: createTaskViewModel){
+                await viewModel.loadTasks()
+            }
         }
     }
 
@@ -120,7 +128,7 @@ struct TasksListView: View {
 
     private var floatingActionButton: some View {
         Button {
-            // Acción futura para crear task
+            isShowingCreateTask = true
         } label: {
             Image(systemName: "plus")
                 .font(.system(size: 22, weight: .semibold))
@@ -267,20 +275,27 @@ private struct TaskListRowView: View {
 }
 
 #Preview {
+    let repository = TasksRepositoryImpl(
+        dataSource: PreviewTaskDataSource()
+    )
+
     NavigationStack {
         TasksListView(
             viewModel: TasksListViewModel(
                 getTasksUseCase: GetTasksUseCase(
-                    taskRepository: TasksRepositoryImpl(
-                        dataSource: PreviewTaskDataSource()
-                    )
+                    taskRepository: repository
+                )
+            ),
+            createTaskViewModel: CreateTaskViewModel(
+                createTaskUseCase: CreateTaskUseCase(
+                    taskRepository: repository
                 )
             )
         )
     }
 }
 
-private struct PreviewTaskDataSource: TaskDataSourceProtocol {
+ struct PreviewTaskDataSource: TaskDataSourceProtocol {
     
     func fetchTasks() async throws -> [TaskDTO] {
         [

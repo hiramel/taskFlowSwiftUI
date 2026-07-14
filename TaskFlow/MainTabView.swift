@@ -10,6 +10,7 @@ import SwiftUI
 struct MainTabView: View {
     
     var viewModel: TasksListViewModel
+    var createTaskViewModel: CreateTaskViewModel
     
     var body: some View {
         TabView {
@@ -20,7 +21,7 @@ struct MainTabView: View {
                 Label("Dashboard", systemImage: "house")
             }
             NavigationStack {
-                TasksListView(viewModel: viewModel)
+                TasksListView(viewModel: viewModel, createTaskViewModel: createTaskViewModel)
             }
             .tabItem {
                 Label("Tasks", systemImage: "checklist")

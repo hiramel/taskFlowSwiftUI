@@ -29,7 +29,7 @@ struct TaskFlowApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainTabView(viewModel: container.tasksListViewModel)
+            MainTabView(viewModel: container.tasksListViewModel, createTaskViewModel: container.createTaskViewModel)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
@@ -59,6 +59,7 @@ final class AppContainer {
     lazy var tasksListViewModel = TasksListViewModel(getTasksUseCase: getTasksUseCase)
     
     lazy var createTaskUseCase = CreateTaskUseCase(taskRepository: taskRepository)
+    lazy var createTaskViewModel = CreateTaskViewModel(createTaskUseCase: createTaskUseCase)
 
 }
 
