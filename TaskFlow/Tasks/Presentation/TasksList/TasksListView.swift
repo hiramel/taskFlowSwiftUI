@@ -70,21 +70,37 @@ struct TasksListView: View {
             VStack(spacing: 0) {
                 filterBar
 
-                ScrollView {
-                    LazyVStack(spacing: 12) {
-                        ForEach(filteredTasks(tasks)) { task in
-                            NavigationLink {
-                                TaskDetailsView(task: task)
-                            } label: {
-                                TaskListRowView(task: task)
-                            }
-                            .buttonStyle(.plain)
+                
+                
+                List {
+                    ForEach(filteredTasks(tasks)) { task in
+                        NavigationLink {
+                            TaskDetailsView(task: task)
+                        } label: {
+                            TaskListRowView(task: task)
                         }
+                        .buttonStyle(.plain)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                delete(task)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(
+                            EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16)
+                        )
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 14)
-                    .padding(.bottom, 110) // deja espacio para que no se tape la última celda
                 }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .contentMargins(.bottom, 110, for: .scrollContent)
+                
+                
+                
+                
             }
             .overlay(alignment: .bottomTrailing) {
                 // aqui esta el fix
@@ -162,6 +178,12 @@ struct TasksListView: View {
             .lowercased()
 
         return normalizedStatus.contains("done") || normalizedStatus.contains("completed")
+    }
+    
+    private func delete(_ task: Task) {
+        _Concurrency.Task {
+            await viewModel.deleteTask(task)
+        }
     }
 }
 
@@ -274,26 +296,26 @@ private struct TaskListRowView: View {
     }
 }
 
-#Preview {
-    let repository = TasksRepositoryImpl(
-        dataSource: PreviewTaskDataSource()
-    )
-
-    NavigationStack {
-        TasksListView(
-            viewModel: TasksListViewModel(
-                getTasksUseCase: GetTasksUseCase(
-                    taskRepository: repository
-                )
-            ),
-            createTaskViewModel: CreateTaskViewModel(
-                createTaskUseCase: CreateTaskUseCase(
-                    taskRepository: repository
-                )
-            )
-        )
-    }
-}
+//#Preview {
+//    let repository = TasksRepositoryImpl(
+//        dataSource: PreviewTaskDataSource()
+//    )
+//
+//    NavigationStack {
+//        TasksListView(
+//            viewModel: TasksListViewModel(
+//                getTasksUseCase: GetTasksUseCase(
+//                    taskRepository: repository
+//                )
+//            ),
+//            createTaskViewModel: CreateTaskViewModel(
+//                createTaskUseCase: CreateTaskUseCase(
+//                    taskRepository: repository
+//                )
+//            )
+//        )
+//    }
+//}
 
  struct PreviewTaskDataSource: TaskDataSourceProtocol {
     

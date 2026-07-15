@@ -24,4 +24,9 @@ final class TasksRepositoryImpl: TasksRepositoryProtocol {
         let dto = task.toDTO()
         try await dataSource.createTask(dto)
     }
+    
+    func deleteTask(id: String) async throws {
+        try await dataSource.deleteTask(id: id)
+        
+    }
 }

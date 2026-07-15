@@ -56,7 +56,9 @@ final class AppContainer {
     
     lazy var taskRepository = TasksRepositoryImpl(dataSource: taskDataSource)
     lazy var getTasksUseCase = GetTasksUseCase(taskRepository: taskRepository)
-    lazy var tasksListViewModel = TasksListViewModel(getTasksUseCase: getTasksUseCase)
+    
+    lazy var deleteTasksUseCase = DeleteTaskUseCase(taskRepository: taskRepository)
+    lazy var tasksListViewModel = TasksListViewModel(getTasksUseCase: getTasksUseCase, deleteTaskUseCase: deleteTasksUseCase)
     
     lazy var createTaskUseCase = CreateTaskUseCase(taskRepository: taskRepository)
     lazy var createTaskViewModel = CreateTaskViewModel(createTaskUseCase: createTaskUseCase)
