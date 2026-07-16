@@ -11,6 +11,7 @@ struct MainTabView: View {
     
     var viewModel: TasksListViewModel
     var createTaskViewModel: CreateTaskViewModel
+    var makeEditTaskViewModel: (Task) -> EditTaskViewModel
     
     var body: some View {
         TabView {
@@ -21,7 +22,8 @@ struct MainTabView: View {
                 Label("Dashboard", systemImage: "house")
             }
             NavigationStack {
-                TasksListView(viewModel: viewModel, createTaskViewModel: createTaskViewModel)
+                TasksListView(viewModel: viewModel, createTaskViewModel: createTaskViewModel,
+                              makeEditTaskViewModel: makeEditTaskViewModel)
             }
             .tabItem {
                 Label("Tasks", systemImage: "checklist")

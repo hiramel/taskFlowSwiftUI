@@ -26,10 +26,10 @@ struct TaskFlowApp: App {
     let persistenceController = PersistenceController.shared
     let container = AppContainer()
 
-
     var body: some Scene {
         WindowGroup {
-            MainTabView(viewModel: container.tasksListViewModel, createTaskViewModel: container.createTaskViewModel)
+            MainTabView(viewModel: container.tasksListViewModel, createTaskViewModel: container.createTaskViewModel,
+                        makeEditTaskViewModel: container.makeEditTaskViewModel)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
@@ -40,29 +40,33 @@ final class AppContainer {
     private lazy var restTaskDataSource = RemoteTaskDataSourceImpl(
         baseURL: AppEnvironment.tasksBaseURL
     )
-
+    
     private lazy var firestoreTaskDataSource = FirestoreTaskDataSourceImpl()
     
     private lazy var taskDataSource: TaskDataSourceProtocol = {
         switch AppEnvironment.taskDataSourceKind {
         case .rest:
             return self.restTaskDataSource
-
+            
         case .firestore:
             return self.firestoreTaskDataSource
         }
     }()
     
-    
     lazy var taskRepository = TasksRepositoryImpl(dataSource: taskDataSource)
     lazy var getTasksUseCase = GetTasksUseCase(taskRepository: taskRepository)
-    
     lazy var deleteTasksUseCase = DeleteTaskUseCase(taskRepository: taskRepository)
     lazy var tasksListViewModel = TasksListViewModel(getTasksUseCase: getTasksUseCase, deleteTaskUseCase: deleteTasksUseCase)
-    
     lazy var createTaskUseCase = CreateTaskUseCase(taskRepository: taskRepository)
     lazy var createTaskViewModel = CreateTaskViewModel(createTaskUseCase: createTaskUseCase)
-
+    lazy var updateTaskUseCase = UpdateTaskUseCase(taskRepository: taskRepository)
+    
+    func makeEditTaskViewModel(task: Task) -> EditTaskViewModel {
+        EditTaskViewModel(
+            task: task,
+            updateTaskUseCase: updateTaskUseCase
+        )
+    }
 }
 
 enum AppEnvironment {

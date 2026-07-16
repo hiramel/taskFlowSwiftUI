@@ -17,7 +17,7 @@ final class CreateTaskViewModel {
     var description = ""
     var dueDate = ""
     var category = "Work"
-    var priority = "Medium Priority"
+    var priority = "Medium"
     var state: CreateTaskState = .idle
     
     
@@ -69,7 +69,7 @@ final class CreateTaskViewModel {
         description = ""
         dueDate = ""
         category = "Work"
-        priority = "Medium Priority"
+        priority = "Medium"
     }
 }
 

@@ -25,5 +25,5 @@ struct PillView: View {
 }
 
 #Preview {
-    PillView(pillText: "High Priority")
+    PillView(pillText: "High")
 }

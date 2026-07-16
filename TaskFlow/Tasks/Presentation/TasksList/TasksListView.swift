@@ -10,6 +10,7 @@ import SwiftUI
 struct TasksListView: View {
     let viewModel: TasksListViewModel
     let createTaskViewModel: CreateTaskViewModel
+    let makeEditTaskViewModel: (Task) -> EditTaskViewModel
 
     @State private var selectedFilter: TaskListFilter = .all
     @State private var isShowingCreateTask = false
@@ -69,13 +70,16 @@ struct TasksListView: View {
         case .loaded(let tasks):
             VStack(spacing: 0) {
                 filterBar
-
-                
                 
                 List {
                     ForEach(filteredTasks(tasks)) { task in
                         NavigationLink {
-                            TaskDetailsView(task: task)
+                            TaskDetailsView(
+                                task: task,
+                                makeEditTaskViewModel: makeEditTaskViewModel
+                            ) {
+                                await viewModel.loadTasks()
+                            }
                         } label: {
                             TaskListRowView(task: task)
                         }
@@ -321,7 +325,7 @@ private struct TaskListRowView: View {
     
     func fetchTasks() async throws -> [TaskDTO] {
         [
-            TaskDTO(id: "1", title: "UI/UX Project", description: "Design the new mobile app screens and interaction flow for TaskFlow.", dueDate: "Today, 10:00 AM", category: "Work", priority: "High Priority", status: 0),
+            TaskDTO(id: "1", title: "UI/UX Project", description: "Design the new mobile app screens and interaction flow for TaskFlow.", dueDate: "Today, 10:00 AM", category: "Work", priority: "High", status: 0),
             TaskDTO(id: "2", title: "Study Flutter", description: "Read and practice widgets.", dueDate: "Tomorrow, 09:00 AM", category: "Study", priority: "Medium Priority", status: 0),
             TaskDTO(id: "3", title: "Workout", description: "Cardio and strength.", dueDate: "Tomorrow, 06:00 PM", category: "Health", priority: "Low Priority", status: 1),
             TaskDTO(id: "4", title: "Grocery Shopping", description: "Buy groceries for the week.", dueDate: "May 22, 2024", category: "Personal", priority: "Low Priority", status: 1),
