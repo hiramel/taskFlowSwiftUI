@@ -18,9 +18,11 @@ final class TasksListViewModel {
     var state: TasksListState = .idle
     
     private let getTasksUseCase: GetTasksUseCaseProtocol
+    private let deleteTaskUseCase: DeleteTaskUseCaseProtocol
     
-    init(getTasksUseCase: GetTasksUseCaseProtocol) {
+    init(getTasksUseCase: GetTasksUseCaseProtocol, deleteTaskUseCase: DeleteTaskUseCaseProtocol) {
         self.getTasksUseCase = getTasksUseCase
+        self.deleteTaskUseCase = deleteTaskUseCase
     }
     
     func loadTasks() async {
@@ -28,7 +30,16 @@ final class TasksListViewModel {
 
         do {
             let tasks = try await getTasksUseCase.execute()
-            state = .loaded(tasks)
+            state = .loaded(tasks)//TODO aqui es donde pasa el task a la vista, investigar esto despues.
+        } catch {
+            state = .failed(error.localizedDescription)
+        }
+    }
+    
+    func deleteTask(_ task : Task) async {
+        do {
+            try await deleteTaskUseCase.execute(id: task.id)
+            await loadTasks()
         } catch {
             state = .failed(error.localizedDescription)
         }

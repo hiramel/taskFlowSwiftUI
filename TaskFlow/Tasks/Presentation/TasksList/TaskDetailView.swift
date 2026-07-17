@@ -8,7 +8,21 @@
 import SwiftUI
 
 struct TaskDetailsView: View {
-    let task: Task
+    @State private var task: Task
+    let makeEditTaskViewModel: (Task) -> EditTaskViewModel
+    let onSaved: () async -> Void
+
+    @State private var isShowingEditTask = false
+    
+    init(
+        task: Task,
+        makeEditTaskViewModel: @escaping (Task) -> EditTaskViewModel,
+        onSaved: @escaping () async -> Void
+    ) {
+        _task = State(initialValue: task)
+        self.makeEditTaskViewModel = makeEditTaskViewModel
+        self.onSaved = onSaved
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -26,7 +40,7 @@ struct TaskDetailsView: View {
             }
 
             TaskButtonView(title: "Edit Task") {
-                // Acción futura
+                isShowingEditTask = true
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 16)
@@ -41,6 +55,14 @@ struct TaskDetailsView: View {
                 } label: {
                     Image(systemName: "square.and.arrow.up")
                 }
+            }
+        }
+        .sheet(isPresented: $isShowingEditTask) {
+            EditTaskView(
+                viewModel: makeEditTaskViewModel(task)
+            ) { updatedTask in
+                task = updatedTask
+                await onSaved()
             }
         }
     }
@@ -111,5 +133,28 @@ struct TaskDetailsView: View {
 
 
 #Preview {
-    TaskDetailsView(task: Task(id: "1", title: "UI/UX Project", description: "Design the new mobile app screens and interacion flow for TaskFlow.", dueDate: "Due Today, 10:00 AM", category: "Work", priority: "High Priority", status: "Done"))
+    let repository = TasksRepositoryImpl(
+        dataSource: PreviewTaskDataSource()
+    )
+
+    TaskDetailsView(
+        task: Task(
+            id: "1",
+            title: "UI/UX Project",
+            description: "Design the new mobile app screens and interaction flow for TaskFlow.",
+            dueDate: "Due Today, 10:00 AM",
+            category: "Work",
+            priority: "High Priority",
+            status: "0"
+        ),
+        makeEditTaskViewModel: { task in
+            EditTaskViewModel(
+                task: task,
+                updateTaskUseCase: UpdateTaskUseCase(
+                    taskRepository: repository
+                )
+            )
+        },
+        onSaved: { }
+    )
 }

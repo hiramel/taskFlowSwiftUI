@@ -19,3 +19,17 @@ extension TaskDTO {
         )
     }
 }
+
+extension Task {
+    func toDTO() -> TaskDTO {
+        TaskDTO(
+            id: id,
+            title: title,
+            description: description,
+            dueDate: dueDate,
+            category: category,
+            priority: priority,
+            status: Int(status) ?? 0
+        )
+    }
+}
