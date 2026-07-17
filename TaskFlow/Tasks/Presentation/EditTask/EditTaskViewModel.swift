@@ -36,41 +36,40 @@ final class EditTaskViewModel {
     }
     
     var isSaving: Bool {
-         if case .saving = state {
-             return true
-         }
-         return false
-     }
+        if case .saving = state {
+            return true
+        }
+        return false
+    }
     
     var canSave: Bool {
         !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isSaving
     }
     
     func saveTask() async -> Bool {
-            guard canSave else { return false }
-
-            state = .saving
-
-            let updatedTask = Task(
-                id: task.id,
-                title: title,
-                description: description,
-                dueDate: dueDate,
-                category: category,
-                priority: priority,
-                status: task.status
-            )
-
-            do {
-                try await updateTaskUseCase.execute(task: updatedTask)
-                self.updatedTask = updatedTask
-                state = .saved
-                return true
-            } catch {
-                state = .failed(error.localizedDescription)
-                return false
-            }
+        guard canSave else { return false }
+        state = .saving
+        
+        let updatedTask = Task(
+            id: task.id,
+            title: title,
+            description: description,
+            dueDate: dueDate,
+            category: category,
+            priority: priority,
+            status: task.status
+        )
+        
+        do {
+            try await updateTaskUseCase.execute(task: updatedTask)
+            self.updatedTask = updatedTask
+            state = .saved
+            return true
+        } catch {
+            state = .failed(error.localizedDescription)
+            return false
         }
+    }
 }
 
 enum EditTaskState {

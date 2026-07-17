@@ -132,29 +132,29 @@ struct TaskDetailsView: View {
 }
 
 
-//#Preview {
-//    let repository = TasksRepositoryImpl(
-//        dataSource: PreviewTaskDataSource()
-//    )
-//
-//    TaskDetailsView(
-//        task: Task(
-//            id: "1",
-//            title: "UI/UX Project",
-//            description: "Design the new mobile app screens and interaction flow for TaskFlow.",
-//            dueDate: "Due Today, 10:00 AM",
-//            category: "Work",
-//            priority: "High Priority",
-//            status: "0"
-//        ),
-//        makeEditTaskViewModel: { task in
-//            EditTaskViewModel(
-//                task: task,
-//                updateTaskUseCase: UpdateTaskUseCase(
-//                    taskRepository: repository
-//                )
-//            )
-//        },
-//        onSaved: { }
-//    )
-//}
+#Preview {
+    let repository = TasksRepositoryImpl(
+        dataSource: PreviewTaskDataSource()
+    )
+
+    TaskDetailsView(
+        task: Task(
+            id: "1",
+            title: "UI/UX Project",
+            description: "Design the new mobile app screens and interaction flow for TaskFlow.",
+            dueDate: "Due Today, 10:00 AM",
+            category: "Work",
+            priority: "High Priority",
+            status: "0"
+        ),
+        makeEditTaskViewModel: { task in
+            EditTaskViewModel(
+                task: task,
+                updateTaskUseCase: UpdateTaskUseCase(
+                    taskRepository: repository
+                )
+            )
+        },
+        onSaved: { }
+    )
+}

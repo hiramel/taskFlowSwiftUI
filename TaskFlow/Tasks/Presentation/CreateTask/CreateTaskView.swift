@@ -11,7 +11,7 @@ struct CreateTaskView: View {
     
     @Environment(\.dismiss) private var dismiss
     @Bindable var viewModel: CreateTaskViewModel
-
+    
     let onSaved: () async -> Void
     
     var body: some View {
@@ -30,7 +30,7 @@ struct CreateTaskView: View {
                         Text("Health").tag("Health")
                         Text("Personal").tag("Personal")
                     }
-
+                    
                     Picker("Priority", selection: $viewModel.priority) {
                         Text("High Priority").tag("High")
                         Text("Medium Priority").tag("Medium Priority")
@@ -44,7 +44,6 @@ struct CreateTaskView: View {
                             .foregroundStyle(.red)
                     }
                 }
-                
             }
             .navigationTitle("New Task")
             .navigationBarTitleDisplayMode(.inline)
@@ -60,16 +59,15 @@ struct CreateTaskView: View {
                         save()
                     } label: {
                         if viewModel.isSaving {
-                                   ProgressView()
-                               } else {
-                                   Text("Save")
-                               }
+                            ProgressView()
+                        } else {
+                            Text("Save")
+                        }
                     }
                     .disabled(!viewModel.canSave)
                     
                 }
             }
-            
         }
     }
     

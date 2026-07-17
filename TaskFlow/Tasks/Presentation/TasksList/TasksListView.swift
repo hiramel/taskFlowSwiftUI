@@ -11,14 +11,14 @@ struct TasksListView: View {
     let viewModel: TasksListViewModel
     let createTaskViewModel: CreateTaskViewModel
     let makeEditTaskViewModel: (Task) -> EditTaskViewModel
-
+    
     @State private var selectedFilter: TaskListFilter = .all
     @State private var isShowingCreateTask = false
-
+    
     var body: some View {
         ZStack {
             background
-
+            
             content
         }
         .navigationTitle("My Tasks")
@@ -31,14 +31,14 @@ struct TasksListView: View {
                     Image(systemName: "chevron.left")
                 }
             }
-
+            
             ToolbarItemGroup(placement: .topBarTrailing) {
                 Button {
                     // Acción futura
                 } label: {
                     Image(systemName: "magnifyingglass")
                 }
-
+                
                 Button {
                     // Acción futura
                 } label: {
@@ -56,7 +56,7 @@ struct TasksListView: View {
             }
         }
     }
-
+    
     @ViewBuilder
     private var content: some View {
         switch viewModel.state {
@@ -66,7 +66,7 @@ struct TasksListView: View {
                 ProgressView("Loading Tasks")
                 Spacer()
             }
-
+            
         case .loaded(let tasks):
             VStack(spacing: 0) {
                 filterBar
@@ -101,10 +101,6 @@ struct TasksListView: View {
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
                 .contentMargins(.bottom, 110, for: .scrollContent)
-                
-                
-                
-                
             }
             .overlay(alignment: .bottomTrailing) {
                 // aqui esta el fix
@@ -112,7 +108,7 @@ struct TasksListView: View {
                     .padding(.trailing, 18)
                     .padding(.bottom, 18)
             }
-
+            
         case .failed(let message):
             ContentUnavailableView(
                 "No se pudieron cargar las tasks",
@@ -122,13 +118,13 @@ struct TasksListView: View {
             .padding(.horizontal, 20)
         }
     }
-
+    
     private var background: some View {
         Color(uiColor: .systemGroupedBackground)
             .ignoresSafeArea()
-        .ignoresSafeArea()
+            .ignoresSafeArea()
     }
-
+    
     private var filterBar: some View {
         HStack(spacing: 12) {
             ForEach(TaskListFilter.allCases) { filter in
@@ -145,7 +141,7 @@ struct TasksListView: View {
         .padding(.vertical, 25)
         .padding(.top, 12)
     }
-
+    
     private var floatingActionButton: some View {
         Button {
             isShowingCreateTask = true
@@ -164,7 +160,7 @@ struct TasksListView: View {
                 )
         }
     }
-
+    
     private func filteredTasks(_ tasks: [Task]) -> [Task] {
         switch selectedFilter {
         case .all:
@@ -175,12 +171,12 @@ struct TasksListView: View {
             return tasks.filter(taskIsCompleted)
         }
     }
-
+    
     private func taskIsCompleted(_ task: Task) -> Bool {
         let normalizedStatus = task.status
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .lowercased()
-
+        
         return normalizedStatus.contains("done") || normalizedStatus.contains("completed")
     }
     
@@ -195,9 +191,9 @@ private enum TaskListFilter: String, CaseIterable, Identifiable {
     case all
     case pending
     case completed
-
+    
     var id: String { rawValue }
-
+    
     var title: String {
         rawValue.capitalized
     }
@@ -207,7 +203,7 @@ private struct TaskFilterChip: View {
     let title: String
     let isSelected: Bool
     let action: () -> Void
-
+    
     var body: some View {
         Button(action: action) {
             ZStack {
@@ -222,7 +218,7 @@ private struct TaskFilterChip: View {
                         )
                         .foregroundStyle(.gray)
                 }
-
+                
                 Text(title)
                     .font(.system(.subheadline, design: .rounded))
                     .fontWeight(.semibold)
@@ -238,7 +234,7 @@ private struct TaskFilterChip: View {
 
 private struct TaskListRowView: View {
     let task: Task
-
+    
     var body: some View {
         HStack(spacing: 14) {
             Image(systemName: taskIsCompleted ? "checkmark.square.fill" : "square")
@@ -246,22 +242,22 @@ private struct TaskListRowView: View {
                 .foregroundStyle(
                     taskIsCompleted ? Color(red: 0.44, green: 0.24, blue: 0.82) : .secondary
                 )
-
+            
             VStack(alignment: .leading, spacing: 6) {
                 Text(task.title)
                     .font(.system(size: 17, weight: .semibold, design: .rounded))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
-
+                
                 Text(task.dueDate)
                     .font(.system(size: 14, design: .rounded))
                     .foregroundStyle(.secondary)
                     .foregroundStyle(.primary)
                     .lineLimit(1)
             }
-
+            
             Spacer(minLength: 10)
-
+            
             PillView(
                 pillText: task.priority,
                 tint: priorityTint
@@ -277,15 +273,15 @@ private struct TaskListRowView: View {
                 .shadow(color: Color.black.opacity(0.04), radius: 10, x: 0, y: 4)
         )
     }
-
+    
     private var taskIsCompleted: Bool {
         let normalizedStatus = task.status
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .lowercased()
-
+        
         return normalizedStatus.contains("done") || normalizedStatus.contains("completed")
     }
-
+    
     private var priorityTint: Color {
         switch task.priority.lowercased() {
         case "high priority", "high":
@@ -300,28 +296,39 @@ private struct TaskListRowView: View {
     }
 }
 
-//#Preview {
-//    let repository = TasksRepositoryImpl(
-//        dataSource: PreviewTaskDataSource()
-//    )
-//
-//    NavigationStack {
-//        TasksListView(
-//            viewModel: TasksListViewModel(
-//                getTasksUseCase: GetTasksUseCase(
-//                    taskRepository: repository
-//                )
-//            ),
-//            createTaskViewModel: CreateTaskViewModel(
-//                createTaskUseCase: CreateTaskUseCase(
-//                    taskRepository: repository
-//                )
-//            )
-//        )
-//    }
-//}
+#Preview {
+    let repository = TasksRepositoryImpl(
+        dataSource: PreviewTaskDataSource()
+    )
 
- struct PreviewTaskDataSource: TaskDataSourceProtocol {
+    NavigationStack {
+        TasksListView(
+            viewModel: TasksListViewModel(
+                getTasksUseCase: GetTasksUseCase(
+                    taskRepository: repository
+                ),
+                deleteTaskUseCase: DeleteTaskUseCase(
+                    taskRepository: repository
+                )
+            ),
+            createTaskViewModel: CreateTaskViewModel(
+                createTaskUseCase: CreateTaskUseCase(
+                    taskRepository: repository
+                )
+            ),
+            makeEditTaskViewModel: { task in
+                EditTaskViewModel(
+                    task: task,
+                    updateTaskUseCase: UpdateTaskUseCase(
+                        taskRepository: repository
+                    )
+                )
+            }
+        )
+    }
+}
+
+struct PreviewTaskDataSource: TaskDataSourceProtocol {
     
     func fetchTasks() async throws -> [TaskDTO] {
         [
@@ -334,8 +341,8 @@ private struct TaskListRowView: View {
     }
     
     func createTask(_ task: TaskDTO) async throws { }
-
+    
     func updateTask(_ task: TaskDTO) async throws { }
-
+    
     func deleteTask(id: String) async throws { }
 }

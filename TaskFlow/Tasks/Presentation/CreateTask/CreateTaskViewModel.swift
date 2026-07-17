@@ -28,21 +28,20 @@ final class CreateTaskViewModel {
     }
     
     var isSaving: Bool {
-         if case .saving = state {
-             return true
-         }
-         return false
-     }
+        if case .saving = state {
+            return true
+        }
+        return false
+    }
     
     var canSave: Bool {
-         !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isSaving
-     }
+        !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isSaving
+    }
     
     func saveTask() async -> Bool {
         guard canSave else { return false }
-
         state = .saving
-
+        
         let task = Task(
             id: UUID().uuidString,
             title: title,
@@ -52,7 +51,7 @@ final class CreateTaskViewModel {
             priority: priority,
             status: "0"
         )
-
+        
         do {
             try await createTaskUseCase.execute(task: task)
             resetFields()

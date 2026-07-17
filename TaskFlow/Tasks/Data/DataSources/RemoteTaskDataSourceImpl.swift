@@ -19,14 +19,11 @@ final class RemoteTaskDataSourceImpl: TaskDataSourceProtocol {
     func fetchTasks() async throws -> [TaskDTO] {
         
         let (data, response) = try await session.data(from: baseURL)
-        
         guard let httpResponse = response as? HTTPURLResponse,
               httpResponse.statusCode == 200 else {
             throw URLError(.badServerResponse)
         }
-        
         return try JSONDecoder().decode([TaskDTO].self, from: data)
-        
     }
     
     func createTask(_ task: TaskDTO) async throws {
@@ -40,8 +37,4 @@ final class RemoteTaskDataSourceImpl: TaskDataSourceProtocol {
     func deleteTask(id: String) async throws {
         throw URLError(.unsupportedURL)
     }
-    
-    
-    
-
 }
