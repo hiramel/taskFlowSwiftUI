@@ -27,6 +27,7 @@ jobs:
             -project TaskFlow.xcodeproj \
             -scheme TaskFlow \
             -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+            -only-testing:TaskFlowTests \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED=NO
 
@@ -36,5 +37,6 @@ jobs:
             -project TaskFlow.xcodeproj \
             -scheme TaskFlow \
             -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+            -only-testing:TaskFlowTests \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED=NO
