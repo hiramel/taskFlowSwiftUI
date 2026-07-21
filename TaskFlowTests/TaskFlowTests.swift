@@ -10,29 +10,36 @@ import XCTest
 
 final class TaskFlowTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    func testTaskDTOToDomain() {
+        //Arrange
+        let dto = TaskDTO(id: "task-1", title: "Aprender CI", description: "Crear pruebas unitarias", dueDate: "2026-07-20", category: "Estudio", priority: "Alta", status: 1)
+        //Act
+        let task = dto.toDomain()
+        
+        //Assert
+        XCTAssertEqual(task.id, "task-1")
+        XCTAssertEqual(task.title, "Aprender CI")
+        XCTAssertEqual(task.description, "Crear pruebas unitarias")
+        XCTAssertEqual(task.dueDate, "2026-07-20")
+        XCTAssertEqual(task.category, "Estudio")
+        XCTAssertEqual(task.priority, "Alta")
+        XCTAssertEqual(task.status, "1")
     }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-        // XCTest Documentation
-        // https://developer.apple.com/documentation/xctest
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    
+    func testTaskDomainToDTO() {
+        
+        let task = Task(id: "task-1", title: "Leche", description: "Ir por Leche", dueDate: "2026-07-20", category: "Estudio", priority: "Media", status: "0")
+        
+        let taskDTO = task.toDTO()
+        
+        XCTAssertEqual(taskDTO.id, "task-1")
+        XCTAssertEqual(taskDTO.title, "Leche")
+        XCTAssertEqual(taskDTO.description, "Ir por Leche")
+        XCTAssertEqual(taskDTO.dueDate, "2026-07-20")
+        XCTAssertEqual(taskDTO.category, "Estudio")
+        XCTAssertEqual(taskDTO.priority, "Media")
+        XCTAssertEqual(taskDTO.status, 0)
+        
     }
 
 }
