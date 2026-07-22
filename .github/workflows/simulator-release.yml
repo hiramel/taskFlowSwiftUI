@@ -1,0 +1,51 @@
+name: Simulator Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-release:
+    name: Build simulator release
+    runs-on: macos-26
+    timeout-minutes: 30
+
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 26.6
+        run: sudo xcode-select --switch /Applications/Xcode_26.6.app/Contents/Developer
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build release for iOS Simulator
+        run: |
+          xcodebuild build \
+            -project TaskFlow.xcodeproj \
+            -scheme TaskFlow \
+            -configuration Release \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath DerivedData \
+            CURRENT_PROJECT_VERSION=${{ github.run_number }} \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Package simulator app
+        run: |
+          test -d DerivedData/Build/Products/Release-iphonesimulator/TaskFlow.app
+          ditto -c -k --sequesterRsrc --keepParent \
+            DerivedData/Build/Products/Release-iphonesimulator/TaskFlow.app \
+            TaskFlow-Simulator.zip
+
+      - name: Upload simulator artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TaskFlow-Simulator-${{ github.run_number }}
+          path: TaskFlow-Simulator.zip
+          if-no-files-found: error
+          retention-days: 7
